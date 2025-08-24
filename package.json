@@ -1,5 +1,5 @@
 {
-  "name": "Fail-In-Public",
+  "name": "fail-in-public",
   "displayName": "Fail In Public",
   "description": "",
   "version": "0.1.0",
@@ -58,6 +58,7 @@
     "@azure-rest/ai-inference": "^1.0.0-beta.6",
     "@azure/core-auth": "^1.10.0",
     "@mistralai/mistralai": "^1.9.18",
+    "@vscode/vsce": "^3.6.0",
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
     "twitter-api-v2": "^1.25.0"
