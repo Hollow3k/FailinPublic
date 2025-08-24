@@ -7,12 +7,12 @@ import { main } from "./ai";
 const apiUrl = "https://fail-in-public-api.onrender.com";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Congratulations, your extension "error-tweeter" is now active!');
+  console.log('Congratulations, your extension "Fail In Public" is now active!');
 
   const disposable = vscode.commands.registerCommand(
     "error-tweeter.helloWorld",
     () => {
-      vscode.window.showInformationMessage("Hello World from error-tweeter!");
+      vscode.window.showInformationMessage("Hello World from Fail In Public!");
     }
   );
   

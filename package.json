@@ -1,8 +1,8 @@
 {
-  "name": "error-tweeter",
-  "displayName": "error-tweeter",
+  "name": "Fail-In-Public",
+  "displayName": "Fail In Public",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.103.0"
   },
