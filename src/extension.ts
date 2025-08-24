@@ -10,14 +10,14 @@ export function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "Fail In Public" is now active!');
 
   const disposable = vscode.commands.registerCommand(
-    "error-tweeter.helloWorld",
+    "fip.helloWorld",
     () => {
       vscode.window.showInformationMessage("Hello World from Fail In Public!");
     }
   );
   
   const tryToCompile = vscode.commands.registerCommand(
-    "error-tweeter.run",
+    "fip.run",
     async () => {
       const currentFile = getActiveFilePath();
 
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // const loginReddit = vscode.commands.registerCommand(
-  //   "error-tweeter.loginReddit",
+  //   "fip.loginReddit",
   //   () => {
   //     const clientId = "920-zYRtWx_rflo153W6VA"; // your client ID
   //     const redirectUri = "http://localhost:3000/";
@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
   //   }
   // );
   // const creatingPost = vscode.commands.registerCommand(
-  //   "error-tweeter.createPost",
+  //   "fip.createPost",
   //   async () => {
   //     const p = await createPost(
   //       `Main.java:3: error: ';' expected        System.out.println("Hello World")                                         ^1 error`
