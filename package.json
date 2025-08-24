@@ -2,6 +2,7 @@
   "name": "fail-in-public",
   "displayName": "Fail In Public",
   "description": "",
+  "publisher": "AngadBajaj",
   "version": "0.1.0",
   "icon":"images/extension-icon.png",
   "engines": {
@@ -15,23 +16,23 @@
   "contributes": {
     "commands": [
       {
-        "command": "error-tweeter.helloWorld",
+        "command": "fip.helloWorld",
         "title": "Hello World"
       },
       {
-        "command": "error-tweeter.try",
+        "command": "fip.try",
         "title": "Send test tweet"
       },
       {
-        "command": "error-tweeter.run",
+        "command": "fip.run",
         "title": "test runner"
       },
       {
-        "command": "error-tweeter.loginReddit",
+        "command": "fip.loginReddit",
         "title": "Login Reddit"
       },
       {
-        "command": "error-tweeter.createPost",
+        "command": "fip.createPost",
         "title": "Post"
       }
     ]
