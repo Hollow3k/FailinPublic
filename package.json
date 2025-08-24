@@ -3,6 +3,7 @@
   "displayName": "Fail In Public",
   "description": "",
   "version": "0.1.0",
+  "icon":"images/extension-icon.png",
   "engines": {
     "vscode": "^1.103.0"
   },
