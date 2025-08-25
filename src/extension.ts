@@ -6,15 +6,7 @@ import axios from "axios";
 const apiUrl = "https://fail-in-public-api-yzd5.onrender.com";
 
 export function activate(context: vscode.ExtensionContext) {
-  const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  myStatusBarItem.command = 'fip.run';
-  myStatusBarItem.text = '$(play) FIP RUN';
-  myStatusBarItem.tooltip = 'Click to run Fail in Public';
-  myStatusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
-  myStatusBarItem.show();
-
-  context.subscriptions.push(myStatusBarItem);
-  console.log('FAIL IN PUBLIC extension is now active!');
+  console.log('Congratulations, your extension FAIL IN PUBLIC is now active!');
 
   const hello = vscode.commands.registerCommand("fip.helloWorld", () => {
     vscode.window.showInformationMessage("Hello World from fip!");
