@@ -2,72 +2,43 @@ import * as vscode from "vscode";
 import { exec } from "child_process";
 import * as path from "path";
 import axios from "axios";
-import { main } from "./ai";
 
-const apiUrl = "https://fail-in-public-api.onrender.com";
+const apiUrl = "https://fail-in-public-api-yzd5.onrender.com";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Congratulations, your extension "Fail In Public" is now active!');
+  console.log('Congratulations, your extension FAIL IN PUBLIC is now active!');
 
-  const disposable = vscode.commands.registerCommand(
-    "fip.helloWorld",
-    () => {
-      vscode.window.showInformationMessage("Hello World from Fail In Public!");
+  const hello = vscode.commands.registerCommand("fip.helloWorld", () => {
+    vscode.window.showInformationMessage("Hello World from fip!");
+  });
+
+  const runner = vscode.commands.registerCommand("fip.run", async () => {
+    const currentFile = getActiveFilePath();
+
+    if (!currentFile) {
+      return;
     }
-  );
-  
-  const tryToCompile = vscode.commands.registerCommand(
-    "fip.run",
-    async () => {
-      const currentFile = getActiveFilePath();
-
-      if (!currentFile) {
-        return;
-      }
-      try {
-        await runCpp(currentFile);
-      } catch (err: any) {
-        vscode.window.showErrorMessage(err.message);
-      }
+    try {
+      await runCpp(currentFile);
+    } catch (err: any) {
+      vscode.window.showErrorMessage(err.message);
     }
-  );
+  });
 
-  // const loginReddit = vscode.commands.registerCommand(
-  //   "fip.loginReddit",
-  //   () => {
-  //     const clientId = "920-zYRtWx_rflo153W6VA"; // your client ID
-  //     const redirectUri = "http://localhost:3000/";
-  //     const authUrl =
-  //       `https://www.reddit.com/api/v1/authorize?` +
-  //       `client_id=${clientId}&` +
-  //       `response_type=code&` +
-  //       `state=randomstring123&` + // can randomize later
-  //       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-  //       `duration=permanent&` +
-  //       `scope=submit`;
-
-  //     vscode.env.openExternal(vscode.Uri.parse(authUrl));
-  //     vscode.window.showInformationMessage(
-  //       "Opened Reddit login page in browser!"
-  //     );
-  //   }
-  // );
-  // const creatingPost = vscode.commands.registerCommand(
-  //   "fip.createPost",
-  //   async () => {
-  //     const p = await createPost(
-  //       `Main.java:3: error: ';' expected        System.out.println("Hello World")                                         ^1 error`
-  //     );
-
-  //     console.log(p);
-  //   }
-  // );
-  context.subscriptions.push(disposable, tryToCompile);
+  context.subscriptions.push(hello, runner);
 }
-// This method is called when your extension is deactivated
+
 export function deactivate() {}
 
-// filePath is the .cpp file the user wants to run
+function getActiveFilePath(): string | null {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    vscode.window.showErrorMessage("No active editor found!");
+    return null;
+  }
+  return editor.document.fileName; // <-- full path to the opened file
+}
+
 function runCpp(filePath: string) {
   return new Promise<void>((resolve, reject) => {
     const outputPath = path.join(path.dirname(filePath), "a.out");
@@ -78,11 +49,9 @@ function runCpp(filePath: string) {
       async (compileErr, _, compileStderr) => {
         if (compileErr) {
           console.error("Compilation error detected:");
-          // console.error(compileStderr);
-          // const generatedPost = await createPost(compileStderr); // ai generated post
-          const generatedPost = await main(compileStderr); // ai generated post
-          console.log(generatedPost);
-          postToBackend(generatedPost);
+
+          postToBackend(compileStderr);
+
           reject(new Error("Compilation failed"));
           return;
         }
@@ -91,9 +60,7 @@ function runCpp(filePath: string) {
         exec(`"${outputPath}"`, async (runErr, runStdout, runStderr) => {
           if (runErr) {
             console.error("Runtime error detected:");
-            // const generatedPost = await createPost(runStderr); // ai generated post
-            const generatedPost = await main(runStderr); // ai generated post
-            postToBackend(generatedPost);
+            postToBackend(runStderr);
             reject(new Error("Runtime failed"));
             return;
           }
@@ -107,19 +74,10 @@ function runCpp(filePath: string) {
   });
 }
 
-function getActiveFilePath(): string | null {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) {
-    vscode.window.showErrorMessage("No active editor found!");
-    return null;
-  }
-  return editor.document.fileName; // <-- full path to the opened file
-}
-
-const postToBackend = async (content: string) => {
+const postToBackend = async (e: string) => {
   const p = await axios.post(`${apiUrl}/posts`, {
     username: "starz",
-    message: content,
+    error: e,
   });
   console.log("posted to database", p);
 };

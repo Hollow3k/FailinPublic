@@ -3,8 +3,8 @@
   "displayName": "Fail In Public",
   "description": "",
   "publisher": "AngadBajaj",
-  "version": "0.1.2",
-  "icon":"images/extension-icon.png",
+  "version": "1.0.0",
+  "icon": "images/extension-icon.png",
   "engines": {
     "vscode": "^1.103.0"
   },
@@ -20,20 +20,8 @@
         "title": "Hello World"
       },
       {
-        "command": "fip.try",
-        "title": "Send test tweet"
-      },
-      {
         "command": "fip.run",
         "title": "test runner"
-      },
-      {
-        "command": "fip.loginReddit",
-        "title": "Login Reddit"
-      },
-      {
-        "command": "fip.createPost",
-        "title": "Post"
       }
     ]
   },
