@@ -6,7 +6,15 @@ import axios from "axios";
 const apiUrl = "https://fail-in-public-api-yzd5.onrender.com";
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Congratulations, your extension FAIL IN PUBLIC is now active!');
+  const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  myStatusBarItem.command = 'fip.run';
+  myStatusBarItem.text = '$(play) FIP RUN';
+  myStatusBarItem.tooltip = 'Click to run Fail in Public';
+  myStatusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
+  myStatusBarItem.show();
+
+  context.subscriptions.push(myStatusBarItem);
+  console.log('FAIL IN PUBLIC extension is now active!');
 
   const hello = vscode.commands.registerCommand("fip.helloWorld", () => {
     vscode.window.showInformationMessage("Hello World from fip!");
@@ -30,6 +38,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {}
 
+/**
+ * Get active file path
+ */
 function getActiveFilePath(): string | null {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
@@ -39,6 +50,9 @@ function getActiveFilePath(): string | null {
   return editor.document.fileName; // <-- full path to the opened file
 }
 
+/**
+ * Compile + run C++ file
+ */
 function runCpp(filePath: string) {
   return new Promise<void>((resolve, reject) => {
     const outputPath = path.join(path.dirname(filePath), "a.out");
@@ -49,9 +63,7 @@ function runCpp(filePath: string) {
       async (compileErr, _, compileStderr) => {
         if (compileErr) {
           console.error("Compilation error detected:");
-
-          postToBackend(compileStderr);
-
+          await postToBackend(compileStderr);
           reject(new Error("Compilation failed"));
           return;
         }
@@ -60,7 +72,7 @@ function runCpp(filePath: string) {
         exec(`"${outputPath}"`, async (runErr, runStdout, runStderr) => {
           if (runErr) {
             console.error("Runtime error detected:");
-            postToBackend(runStderr);
+            await postToBackend(runStderr);
             reject(new Error("Runtime failed"));
             return;
           }
@@ -74,10 +86,44 @@ function runCpp(filePath: string) {
   });
 }
 
+/**
+ * Get GitHub session (OAuth)
+ */
+async function getUserSession(): Promise<vscode.AuthenticationSession | null> {
+  try {
+    const session = await vscode.authentication.getSession(
+      "github",
+      ["read:user"], // GitHub scope
+      { createIfNone: true } // prompt login if not logged in
+    );
+    return session;
+  } catch (err) {
+    vscode.window.showErrorMessage("Login failed: " + err);
+    return null;
+  }
+}
+
+/**
+ * Post error to backend with GitHub username
+ */
 const postToBackend = async (e: string) => {
+  const session = await getUserSession();
+  if (!session) {
+    vscode.window.showErrorMessage("You must sign in with GitHub first!");
+    return;
+  }
+
+  // Fetch GitHub profile with accessToken
+  const ghUser = await axios.get("https://api.github.com/user", {
+    headers: { Authorization: `token ${session.accessToken}` },
+  });
+
+  const username = ghUser.data.login;
+
   const p = await axios.post(`${apiUrl}/posts`, {
-    username: "starz",
+    username,
     error: e,
   });
-  console.log("posted to database", p);
+
+  console.log("posted to database", p.data);
 };
